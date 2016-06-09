@@ -1,6 +1,6 @@
 # spectral
 
-A simple C program for spectral analysis.
+A simple C program for frequency analysis of text.
 
 Just pipe your analyzed file into it.
 
