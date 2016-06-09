@@ -2,6 +2,10 @@
 
 A simple C program for frequency analysis of text.
 
+Supports utf-8 multi-byte characters - emoji, anyone?
+
+## How to use it
+
 Just pipe your analyzed file into it.
 
 ```none
