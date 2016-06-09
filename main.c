@@ -177,7 +177,7 @@ int main(int argc, const char *argv)
 			if (toprint[0] == '\t') toprint = "\\t";
 		}
 
-		printf("\t'%s'\t%d\n", toprint, list[i]->count);
+		printf("\t%s\t%d\n", toprint, list[i]->count);
 	}
 
 	free(list);
