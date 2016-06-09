@@ -43,16 +43,6 @@ static Counter *make_counter(const char *src_string)
 /** Char was collected, add to the list or increment it's counter */
 static void process_new_char(void)
 {
-	/*
-	printf("Unicode char = ");
-
-	for (int i = 0; i < utf_buffer_len; i++) {
-		printf("%02x, ", (uint8_t) utf_buffer[i], utf_buffer[i]);
-	}
-
-	printf("(%s)\n", utf_buffer);
-	*/
-
 	// Add to the list or increment
 	if (head == NULL) {
 		// no list yet
@@ -120,8 +110,22 @@ static void incoming_byte(char c)
 		utf_remain--;
 		// We should check the starting 2 bits here
 
-		if (utf_remain == 0) {
-			process_new_char();
+		if ((c & 0xC0) != 0x80) {
+			// not a valid unicode followup character
+			fprintf(stderr, "Invalid unicode char at %02X\n", (uint8_t)c);
+
+			char *x = strdup(utf_buffer);
+			int count = utf_buffer_len;
+			for (int i = 0; i < count; i++) {
+				start_utf_char(x[i], 0);
+				process_new_char();
+			}
+
+			free(x);
+		} else {
+			if (utf_remain == 0) {
+				process_new_char();
+			}
 		}
 	}
 }
@@ -162,6 +166,10 @@ int main(int argc, const char *argv)
 	for (int i = 0; i < point_count; i++) {
 		const char *toprint = list[i]->point;
 
+		for (int i = 0; i < strlen(toprint); i++) {
+			printf("%02x ", (uint8_t)toprint[i]);
+		}
+
 		if (strlen(toprint) == 1 && toprint[0] < ' ') {
 			// TODO nicer formatting
 			if (toprint[0] == '\n') toprint = "\\n";
@@ -169,7 +177,7 @@ int main(int argc, const char *argv)
 			if (toprint[0] == '\t') toprint = "\\t";
 		}
 
-		printf("'%s'\t%d\n", toprint, list[i]->count);
+		printf("\t'%s'\t%d\n", toprint, list[i]->count);
 	}
 
 	free(list);
